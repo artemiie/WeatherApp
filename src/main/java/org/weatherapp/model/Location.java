@@ -1,13 +1,22 @@
 package org.weatherapp.model;
 
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Location {
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("local_names")
     private Map<String, String> localNames;
+    @JsonProperty("lat")
     private double lat;
+    @JsonProperty("lon")
     private double lon;
+    @JsonProperty("country")
     private String country;
+    @JsonProperty("state")
     private String state;
 
     public String getName() {

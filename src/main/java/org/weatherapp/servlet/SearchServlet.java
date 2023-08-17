@@ -1,6 +1,5 @@
 package org.weatherapp.servlet;
 
-import org.apache.commons.lang3.StringUtils;
 import org.weatherapp.model.Location;
 import org.weatherapp.service.WeatherService;
 
@@ -11,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+
+import static org.weatherapp.util.Utils.isValid;
 
 @WebServlet("/search")
 public class SearchServlet extends HttpServlet {
@@ -24,8 +25,8 @@ public class SearchServlet extends HttpServlet {
 
         final String cityName = req.getParameter("cityInput");
 
-        if (StringUtils.isEmpty(cityName) || StringUtils.isBlank(cityName)) {
-            req.setAttribute("errorCityName", "City name is not valid");
+        if (!isValid(cityName)) {
+            req.setAttribute("errorCityName", "City name is not valid.");
             req.getRequestDispatcher("/WEB-INF/search.jsp").forward(req, resp);
             return;
         }
@@ -34,7 +35,7 @@ public class SearchServlet extends HttpServlet {
         List<Location> locations = weatherService.getLocations(cityName);
 
         if (locations.isEmpty()) {
-            req.setAttribute("errorCityName", "City is not found");
+            req.setAttribute("errorCityName", "City is not found.");
             req.getRequestDispatcher("/WEB-INF/search.jsp").forward(req, resp);
             return;
         }

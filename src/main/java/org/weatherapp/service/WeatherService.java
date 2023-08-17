@@ -60,7 +60,7 @@ public class WeatherService {
         Location[] locations = new Location[0];
         try {
             response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            locations = new Gson().fromJson(response.body(), Location[].class);
+            locations = objectMapper.readValue(response.body(), Location[].class);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
