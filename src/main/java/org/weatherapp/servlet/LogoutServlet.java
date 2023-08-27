@@ -1,6 +1,6 @@
 package org.weatherapp.servlet;
 
-import org.weatherapp.dao.SessionDao;
+import org.weatherapp.service.UserSessionService;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.weatherapp.util.Utils.getCookieByName;
 
@@ -22,8 +21,7 @@ public class LogoutServlet extends HttpServlet {
         } catch (Exception e) {
             return;
         }
-        @SuppressWarnings("unchecked") final AtomicReference<SessionDao> dao = (AtomicReference<SessionDao>) req.getServletContext().getAttribute("sessionDao");
-        dao.get().delete(cookie.getValue());
+        UserSessionService.delete(cookie.getValue());
         Cookie emptyCookie = new Cookie("sessionId", null);
         emptyCookie.setMaxAge(0);
         resp.addCookie(emptyCookie);

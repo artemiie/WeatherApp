@@ -1,13 +1,12 @@
 package org.weatherapp.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.weatherapp.dao.SessionDao;
-import org.weatherapp.dao.UserDao;
-import org.weatherapp.model.Session;
+import org.weatherapp.model.UserSession;
+import org.weatherapp.service.UserService;
+import org.weatherapp.service.UserSessionService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Utils {
     public static Cookie getCookieByName(Cookie[] cookies, String name) throws Exception {
@@ -27,26 +26,22 @@ public class Utils {
     }
 
     public static boolean isUserLogged(HttpServletRequest request, Cookie cookie) {
-        @SuppressWarnings("unchecked") final AtomicReference<SessionDao> sessionDao = (AtomicReference<SessionDao>) request.getServletContext().getAttribute("sessionDao");
-        @SuppressWarnings("unchecked") final AtomicReference<UserDao> userDao = (AtomicReference<UserDao>) request.getServletContext().getAttribute("userDao");
-
         if (cookie == null || cookie.getValue() == null || cookie.getValue().isEmpty() || cookie.getValue().isBlank()) {
             return false;
         }
 
         String sessionId = cookie.getValue();
-        Session session;
+        UserSession userSession;
         try {
-            session = sessionDao.get().getById(sessionId);
+            userSession = UserSessionService.find(sessionId);
         } catch (Exception e) {
             return false;
         }
 
-
         try {
-            userDao.get().getById(session.getUserId());
+            assert UserService.findById(userSession.getUserId()) != null;
         } catch (Exception e) {
-            sessionDao.get().delete(sessionId);
+            UserSessionService.delete(sessionId);
             return false;
         }
 

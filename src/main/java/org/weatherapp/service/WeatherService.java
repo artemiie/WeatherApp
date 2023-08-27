@@ -19,7 +19,7 @@ public class WeatherService {
     private static final String WEATHER_API_URL = "data/3.0/onecall?";
     private static final String GEOCODING_API_URL = "geo/1.0/direct?";
     private static final String API_KEY_SUFIX = "&appid=";
-    private static final String API_KEY = "";
+    private static final String API_KEY = "d926f9b25bcedfd1e3d8ff4bb818d834";
     private static final String CITY_NAME_SUFIX = "&q=";
     private static final String LATITUDE_SUFIX = "&lat=";
     private static final String LONGITUDE_SUFIX = "&lon=";

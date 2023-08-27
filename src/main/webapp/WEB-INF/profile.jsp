@@ -29,12 +29,12 @@
                             <c:forEach var="s" items="${userLocations}">
                                 <form method="post" action="./weather">
                                     <div class="weather-info">
-                                        <button type="submit">${s.country} ${s.state} ${s.name}</button>
+                                        <button type="submit">${s.country} ${s.state} ${s.city}</button>
                                         <input type="hidden" name="lat" value="${s.lat}">
                                         <input type="hidden" name="lon" value="${s.lon}">
                                         <input type="hidden" name="country" value="${s.country}">
                                         <input type="hidden" name="state" value="${s.state}">
-                                        <input type="hidden" name="city" value="${s.name}">
+                                        <input type="hidden" name="city" value="${s.city}">
                                         <input type="hidden" name="isSubscriptionActive" value="true">
                                     </div>
                                 </form>

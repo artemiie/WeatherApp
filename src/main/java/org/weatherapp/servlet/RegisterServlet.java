@@ -1,10 +1,11 @@
 package org.weatherapp.servlet;
+
 import com.password4j.Hash;
 import com.password4j.Password;
-import org.weatherapp.dao.SessionDao;
-import org.weatherapp.dao.UserDao;
-import org.weatherapp.model.Session;
 import org.weatherapp.model.User;
+import org.weatherapp.model.UserSession;
+import org.weatherapp.service.UserService;
+import org.weatherapp.service.UserSessionService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.weatherapp.util.Utils.isValid;
 
@@ -36,7 +36,7 @@ public class RegisterServlet extends HttpServlet {
         final String login = req.getParameter("login");
         final String password = req.getParameter("password");
         final String name = req.getParameter("name");
-        final String userId = UUID.randomUUID().toString();
+        //final int userId = UUID.randomUUID().toString();
         final String sessionId = UUID.randomUUID().toString();
 
         if (!isValid(login)) errors.put("login", "Please enter a valid login");
@@ -48,23 +48,23 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        @SuppressWarnings("unchecked") final AtomicReference<UserDao> dao = (AtomicReference<UserDao>) req.getServletContext().getAttribute("userDao");
-
         Hash hash = Password.hash(password).withBcrypt();
-
-        boolean userIsSaved = dao.get().save(new User(login, hash.getResult(), name, userId));
-        if (!userIsSaved) {
+        User newUser = new User(login, hash.getResult(), name, LocalDateTime.now());
+        try {
+            UserService.save(newUser);
+        } catch (Exception e) {
             errors.put("userexist", "Such user already exists.");
             loadRegisterPage(req, resp);
             return;
         }
 
-        Session session = new Session(sessionId, userId, LocalDateTime.now().plusHours(24));
+        UserSession userSession = new UserSession(sessionId, newUser.getUserId(), LocalDateTime.now().plusHours(24));
 
-        @SuppressWarnings("unchecked") final AtomicReference<SessionDao> sessiondao = (AtomicReference<SessionDao>) req.getServletContext().getAttribute("sessionDao");
-        sessiondao.get().save(session);
+        UserSessionService.save(userSession);
 
-        Cookie newCookie = new Cookie("sessionId", session.getSessionId());
+        req.getSession().setAttribute("user",newUser);
+
+        Cookie newCookie = new Cookie("sessionId", userSession.getSessionId());
         resp.addCookie(newCookie);
         resp.sendRedirect("/app/profile");
     }

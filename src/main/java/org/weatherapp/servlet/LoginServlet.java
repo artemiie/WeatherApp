@@ -1,10 +1,10 @@
 package org.weatherapp.servlet;
 
 import com.password4j.Password;
-import org.weatherapp.dao.SessionDao;
-import org.weatherapp.dao.UserDao;
-import org.weatherapp.model.Session;
 import org.weatherapp.model.User;
+import org.weatherapp.model.UserSession;
+import org.weatherapp.service.UserService;
+import org.weatherapp.service.UserSessionService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.weatherapp.util.Utils.isValid;
 
@@ -47,12 +46,10 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        @SuppressWarnings("unchecked") final AtomicReference<UserDao> userDao = (AtomicReference<UserDao>) req.getServletContext().getAttribute("userDao");
-
         //get user if exists
         User user = null;
         try {
-            user = userDao.get().getByLogin(login);
+            user = UserService.findByLogin(login);
         } catch (Exception e) {
             errors.put("noSuchUser", e.getMessage());
             req.getRequestDispatcher("/WEB-INF/login.jsp").forward(req, resp);
@@ -67,12 +64,11 @@ public class LoginServlet extends HttpServlet {
         }
 
         //create new session for 24h for logged in user
-        @SuppressWarnings("unchecked") final AtomicReference<SessionDao> sessionDao = (AtomicReference<SessionDao>) req.getServletContext().getAttribute("sessionDao");
-        Session session = new Session(UUID.randomUUID().toString(), user.getUserId(), LocalDateTime.now().plusHours(24));
-        sessionDao.get().save(session);
+        UserSession userSession = new UserSession(UUID.randomUUID().toString(), user.getUserId(), LocalDateTime.now().plusHours(24));
+        UserSessionService.save(userSession);
 
         //add cookie with sessionId
-        Cookie newCookie = new Cookie("sessionId", session.getSessionId());
+        Cookie newCookie = new Cookie("sessionId", userSession.getSessionId());
         resp.addCookie(newCookie);
 
         resp.sendRedirect("/app/profile");

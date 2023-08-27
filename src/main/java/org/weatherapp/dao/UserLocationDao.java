@@ -1,24 +1,35 @@
 package org.weatherapp.dao;
 
+import org.hibernate.Session;
 import org.weatherapp.model.UserLocation;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserLocationDao {
-    private final List<UserLocation> store = new ArrayList<>();
-
-    public List<UserLocation> getByUserId(final String userId) {
-        return store.stream().filter(userLocation -> userLocation.getUserId().equals(userId)).collect(Collectors.toList());
+    public static void save(UserLocation userLocation) {
+        Session session = DaoConfiguration.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            session.save(userLocation);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            session.close();
+        }
     }
 
-    public boolean save(final UserLocation newLocation) {
-        for (UserLocation u : store) {
-            if (u.getUserId().equals(newLocation.getUserId()) && u.getLon().equals(newLocation.getLon()) && u.getLat().equals(newLocation.getLat())) {
-                return false;
-            }
+    public static List<UserLocation> getByUserId(int userId) {
+        Session session = DaoConfiguration.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            List<UserLocation> userLocationList = session.createQuery("from UserLocation where userId = '" + userId + "'").getResultList();
+            session.getTransaction().commit();
+            return userLocationList;
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            session.close();
         }
-        return store.add(newLocation);
     }
 }

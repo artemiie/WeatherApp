@@ -1,16 +1,14 @@
 package org.weatherapp.dao;
 
 import org.hibernate.Session;
-import org.weatherapp.model.User;
+import org.weatherapp.model.UserSession;
 
-import java.util.List;
-
-public class UserDao {
-    public static void save(User user) {
+public class UserSessionDao {
+    public static void save(UserSession userSession) {
         Session session = DaoConfiguration.getSessionFactory().openSession();
         try {
             session.beginTransaction();
-            session.save(user);
+            session.save(userSession);
             session.getTransaction().commit();
         } catch (Exception e) {
             throw e;
@@ -19,13 +17,13 @@ public class UserDao {
         }
     }
 
-    public static User getById(int userId) {
+    public static UserSession find(String sessionId) {
         Session session = DaoConfiguration.getSessionFactory().openSession();
         try {
             session.beginTransaction();
-            User user = session.get(User.class, userId);
+            UserSession userSession = session.get(UserSession.class, sessionId);
             session.getTransaction().commit();
-            return user;
+            return userSession;
         } catch (Exception e) {
             throw e;
         } finally {
@@ -33,13 +31,12 @@ public class UserDao {
         }
     }
 
-    public static List<User> getByLogin(String login) throws Exception {
+    public static void delete(String sessionId) {
         Session session = DaoConfiguration.getSessionFactory().openSession();
         try {
             session.beginTransaction();
-            List<User> userList = session.createQuery("from User where login = '" + login + "'").getResultList();
+            session.createQuery("delete UserSession where sessionId ='" + sessionId + "'").executeUpdate();
             session.getTransaction().commit();
-            return userList;
         } catch (Exception e) {
             throw e;
         } finally {

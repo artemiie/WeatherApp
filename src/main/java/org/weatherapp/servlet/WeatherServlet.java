@@ -1,11 +1,11 @@
 package org.weatherapp.servlet;
 
-import org.weatherapp.dao.SessionDao;
-import org.weatherapp.dao.UserDao;
-import org.weatherapp.dao.UserLocationDao;
-import org.weatherapp.model.Session;
 import org.weatherapp.model.User;
+import org.weatherapp.model.UserSession;
 import org.weatherapp.model.weather.Weather;
+import org.weatherapp.service.UserLocationService;
+import org.weatherapp.service.UserService;
+import org.weatherapp.service.UserSessionService;
 import org.weatherapp.service.WeatherService;
 
 import javax.servlet.ServletException;
@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.weatherapp.util.Utils.getCookieByName;
 
@@ -55,21 +54,17 @@ public class WeatherServlet extends HttpServlet {
             return false;
         }
         User user = getLoggedInUser(req, resp);
-        @SuppressWarnings("unchecked") final AtomicReference<UserLocationDao> userLocationDao = (AtomicReference<UserLocationDao>) req.getServletContext().getAttribute("userLocationDao");
-        return userLocationDao.get().getByUserId(user.getUserId()).stream().anyMatch(userLocation -> userLocation.getLat().equals(lat) && userLocation.getLon().equals(lon));
+        return UserLocationService.findByUserId(user.getUserId()).stream().anyMatch(userLocation -> userLocation.getLat().equals(lat) && userLocation.getLon().equals(lon));
     }
 
     private User getLoggedInUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        @SuppressWarnings("unchecked") final AtomicReference<SessionDao> sessionDao = (AtomicReference<SessionDao>) req.getServletContext().getAttribute("sessionDao");
-        @SuppressWarnings("unchecked") final AtomicReference<UserDao> userDao = (AtomicReference<UserDao>) req.getServletContext().getAttribute("userDao");
-
         Cookie cookie = null;
-        Session session = null;
+        UserSession userSession = null;
         User user = null;
         try {
             cookie = getCookieByName(req.getCookies(), "sessionId");
-            session = sessionDao.get().getById(cookie.getValue());
-            user = userDao.get().getById(session.getUserId());
+            userSession = UserSessionService.find(cookie.getValue());
+            user = UserService.findById(userSession.getUserId());
         } catch (Exception e) {
             req.setAttribute("isUserLogged", false);
             req.getRequestDispatcher("/WEB-INF/profile.jsp").forward(req, resp);

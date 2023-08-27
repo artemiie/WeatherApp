@@ -2,12 +2,12 @@ package org.weatherapp.servlet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.weatherapp.dao.SessionDao;
-import org.weatherapp.dao.UserDao;
-import org.weatherapp.dao.UserLocationDao;
-import org.weatherapp.model.Session;
 import org.weatherapp.model.User;
 import org.weatherapp.model.UserLocation;
+import org.weatherapp.model.UserSession;
+import org.weatherapp.service.UserLocationService;
+import org.weatherapp.service.UserService;
+import org.weatherapp.service.UserSessionService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.weatherapp.util.Utils.getCookieByName;
 
@@ -49,16 +48,13 @@ public class ProfileServlet extends HttpServlet {
     }
 
     private User getLoggedInUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        @SuppressWarnings("unchecked") final AtomicReference<SessionDao> sessionDao = (AtomicReference<SessionDao>) req.getServletContext().getAttribute("sessionDao");
-        @SuppressWarnings("unchecked") final AtomicReference<UserDao> userDao = (AtomicReference<UserDao>) req.getServletContext().getAttribute("userDao");
-
         Cookie cookie = null;
-        Session session = null;
+        UserSession userSession = null;
         User user = null;
         try {
             cookie = getCookieByName(req.getCookies(), "sessionId");
-            session = sessionDao.get().getById(cookie.getValue());
-            user = userDao.get().getById(session.getUserId());
+            userSession = UserSessionService.find(cookie.getValue());
+            user = UserService.findById(userSession.getUserId());
         } catch (Exception e) {
             req.setAttribute("isUserLogged", false);
             req.getRequestDispatcher("/WEB-INF/profile.jsp").forward(req, resp);
@@ -68,8 +64,7 @@ public class ProfileServlet extends HttpServlet {
     }
 
     public void loadProfilePageForLoggedInUser(HttpServletRequest req, HttpServletResponse resp, User user) throws ServletException, IOException {
-        @SuppressWarnings("unchecked") final AtomicReference<UserLocationDao> userLocationDao = (AtomicReference<UserLocationDao>) req.getServletContext().getAttribute("userLocationDao");
-        List<UserLocation> userLocationList = userLocationDao.get().getByUserId(user.getUserId());
+        List<UserLocation> userLocationList = UserLocationService.findByUserId(user.getUserId());
         req.setAttribute("user", user);
         req.setAttribute("userLocations", userLocationList);
         req.setAttribute("isUserLogged", true);
@@ -77,8 +72,6 @@ public class ProfileServlet extends HttpServlet {
     }
 
     private void addLocationsToUser(HttpServletRequest req, HttpServletResponse resp, User user) throws ServletException, IOException {
-        @SuppressWarnings("unchecked") final AtomicReference<UserLocationDao> userLocationDao = (AtomicReference<UserLocationDao>) req.getServletContext().getAttribute("userLocationDao");
-
         final String lat = req.getParameter("lat");
         final String lon = req.getParameter("lon");
         final String city = req.getParameter("city");
@@ -93,7 +86,7 @@ public class ProfileServlet extends HttpServlet {
         }
 
         UserLocation userLocation = new UserLocation(user.getUserId(), lat, lon, city, country, state);
-        userLocationDao.get().save(userLocation);
+        UserLocationService.save(userLocation);
     }
 
 }

@@ -1,27 +1,44 @@
 package org.weatherapp.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "user_location")
 public class UserLocation {
-    private String userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "location_id")
+    private int id;
+    @Column(name = "user_id")
+    private int userId;
+    @Column(name = "lat")
     private String lat;
+    @Column(name = "lon")
     private String lon;
-    private String name;
+    @Column(name = "city")
+    private String city;
+    @Column(name = "country")
     private String country;
+    @Column(name = "state")
     private String state;
 
-    public UserLocation(String userId, String lat, String lon, String name, String country, String state) {
+    public UserLocation() {
+    }
+
+    public UserLocation(int userId, String lat, String lon, String city, String country, String state) {
         this.userId = userId;
         this.lat = lat;
         this.lon = lon;
-        this.name = name;
+        this.city = city;
         this.country = country;
         this.state = state;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
@@ -41,12 +58,12 @@ public class UserLocation {
         this.lon = lon;
     }
 
-    public String getName() {
-        return name;
+    public String getCity() {
+        return city;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getCountry() {

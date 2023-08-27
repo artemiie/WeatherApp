@@ -1,5 +1,7 @@
 package org.weatherapp.servlet;
 
+import org.weatherapp.dao.DaoConfiguration;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebFilter;
@@ -14,6 +16,11 @@ import static org.weatherapp.util.Utils.isUserLogged;
 
 @WebFilter("/*")
 public class AuthFilter extends HttpFilter {
+    @Override
+    public void init() {
+        DaoConfiguration.getSessionFactory();
+    }
+
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
