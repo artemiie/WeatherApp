@@ -39,9 +39,9 @@ public class ProfileServlet extends HttpServlet {
     }
 
     private void checkIfUserIsLoggedIn(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        boolean isUserLogged = (boolean) req.getAttribute("isUserLogged");
-        if (!isUserLogged) {
-            req.setAttribute("isUserLogged", false);
+        boolean isUserSessionActive = (boolean) req.getAttribute("isUserSessionActive");
+        if (!isUserSessionActive) {
+            req.setAttribute("isUserSessionActive", false);
             req.getRequestDispatcher("/WEB-INF/profile.jsp").forward(req, resp);
             throw new RuntimeException("User is not logged in.");
         }
@@ -56,7 +56,7 @@ public class ProfileServlet extends HttpServlet {
             userSession = UserSessionService.find(cookie.getValue());
             user = UserService.findById(userSession.getUserId());
         } catch (Exception e) {
-            req.setAttribute("isUserLogged", false);
+            req.setAttribute("isUserSessionActive", false);
             req.getRequestDispatcher("/WEB-INF/profile.jsp").forward(req, resp);
             throw new RuntimeException("User is not logged in.", e);
         }
@@ -67,7 +67,7 @@ public class ProfileServlet extends HttpServlet {
         List<UserLocation> userLocationList = UserLocationService.findByUserId(user.getUserId());
         req.setAttribute("user", user);
         req.setAttribute("userLocations", userLocationList);
-        req.setAttribute("isUserLogged", true);
+        req.setAttribute("isUserSessionActive", true);
         req.getRequestDispatcher("/WEB-INF/profile.jsp").forward(req, resp);
     }
 

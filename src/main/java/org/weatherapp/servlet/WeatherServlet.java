@@ -49,8 +49,8 @@ public class WeatherServlet extends HttpServlet {
     }
 
     private boolean checkIfSubscriptionisActive(HttpServletRequest req, HttpServletResponse resp, String lat, String lon) throws ServletException, IOException {
-        boolean isUserLogged = (boolean) req.getAttribute("isUserLogged");
-        if (!isUserLogged) {
+        boolean isUserSessionActive = (boolean) req.getAttribute("isUserSessionActive");
+        if (!isUserSessionActive) {
             return false;
         }
         User user = getLoggedInUser(req, resp);
@@ -66,7 +66,7 @@ public class WeatherServlet extends HttpServlet {
             userSession = UserSessionService.find(cookie.getValue());
             user = UserService.findById(userSession.getUserId());
         } catch (Exception e) {
-            req.setAttribute("isUserLogged", false);
+            req.setAttribute("isUserSessionActive", false);
             req.getRequestDispatcher("/WEB-INF/profile.jsp").forward(req, resp);
             throw new RuntimeException("User is not logged in.", e);
         }

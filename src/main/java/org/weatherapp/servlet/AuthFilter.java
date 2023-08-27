@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static org.weatherapp.util.Utils.getCookieByName;
-import static org.weatherapp.util.Utils.isUserLogged;
+import static org.weatherapp.util.Utils.isUserSessionActive;
 
 @WebFilter("/*")
 public class AuthFilter extends HttpFilter {
@@ -25,9 +25,9 @@ public class AuthFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
             Cookie cookie = getCookieByName(request.getCookies(), "sessionId");
-            request.setAttribute("isUserLogged", isUserLogged(request, cookie));
+            request.setAttribute("isUserSessionActive", isUserSessionActive(cookie));
         } catch (Exception e) {
-            request.setAttribute("isUserLogged", false);
+            request.setAttribute("isUserSessionActive", false);
         }
         chain.doFilter(request, response);
     }

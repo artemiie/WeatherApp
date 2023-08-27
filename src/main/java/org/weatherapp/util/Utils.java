@@ -25,7 +25,7 @@ public class Utils {
         return !StringUtils.isEmpty(txt) && !StringUtils.isBlank(txt);
     }
 
-    public static boolean isUserLogged(HttpServletRequest request, Cookie cookie) {
+    public static boolean isUserSessionActive(Cookie cookie) {
         if (cookie == null || cookie.getValue() == null || cookie.getValue().isEmpty() || cookie.getValue().isBlank()) {
             return false;
         }

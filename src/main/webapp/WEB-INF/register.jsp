@@ -23,10 +23,10 @@
         <div id="container">
             <div class="space-between-div"></div>
             <div class="space-between-div"></div>
-            <div id="bigCenteredBox">
+            <div class="bigCenteredBox">
                 <div class="inputBox">
                     <c:choose>
-                        <c:when test="${isUserLogged}">
+                        <c:when test="${isUserSessionActive}">
                             <h3>You have to logout before register!</h3>
                         </c:when>
                         <c:otherwise>

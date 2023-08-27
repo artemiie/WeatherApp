@@ -21,7 +21,7 @@
         <div id="container">
             <div class="space-between-div"></div>
             <div class="space-between-div"></div>
-            <div id="bigCenteredBox">
+            <div class="bigCenteredBox">
                 <div class="inputBox">
                     <c:forEach var="s" items="${locations}">
                         <form method="post" action="./weather">

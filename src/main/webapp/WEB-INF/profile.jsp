@@ -21,10 +21,10 @@
         <div id="container">
             <div class="space-between-div"></div>
             <div class="space-between-div"></div>
-            <div id="bigCenteredBox">
+            <div class="bigCenteredBox">
                 <div class="inputBox" id="scrollable-div">
                     <c:choose>
-                        <c:when test="${isUserLogged}">
+                        <c:when test="${isUserSessionActive}">
                             <div class="weather-info"> <label class="input-label">Hi, ${user.name} !</label></div>
                             <c:forEach var="s" items="${userLocations}">
                                 <form method="post" action="./weather">

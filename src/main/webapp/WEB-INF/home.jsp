@@ -14,7 +14,7 @@
             <div class="header-title">Weather App</div>
             <div class="header-buttons">
                 <c:choose>
-                    <c:when test="${isUserLogged}">
+                    <c:when test="${isUserSessionActive}">
                         <form method="get" action="./logout">
                             <button class="header-button">Logout</button>
                         </form>
@@ -34,10 +34,10 @@
         <div id="container">
             <div class="space-between-div"></div>
             <div class="space-between-div"></div>
-            <div id="bigCenteredBox">
+            <div class="bigCenteredBox">
                 <div class="inputBox">
                     <c:choose>
-                        <c:when test="${isUserLogged}">
+                        <c:when test="${isUserSessionActive}">
                             <form method="get" action="./profile">
                                 <button type="submit">My Profile</button>
                             </form>

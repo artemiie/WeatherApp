@@ -23,10 +23,10 @@
         <div id="container">
             <div class="space-between-div"></div>
             <div class="space-between-div"></div>
-            <div id="bigCenteredBox">
+            <div class="bigCenteredBox">
                 <div class="inputBox">
                     <c:choose>
-                        <c:when test="${isUserLogged}">
+                        <c:when test="${isUserSessionActive}">
                             <div class="weather-info">
                                 <h3>You are already logged in!</h3>
                             </div>

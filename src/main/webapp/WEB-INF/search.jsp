@@ -21,7 +21,7 @@
         <div id="container">
             <div class="space-between-div"></div>
             <div class="space-between-div"></div>
-            <div id="bigCenteredBox">
+            <div class="bigCenteredBox">
                 <div class="inputBox">
                     <form method="post" action="./search">
                         <label for="cityInput" class="input-label">Enter city name</label>

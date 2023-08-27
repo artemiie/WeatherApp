@@ -17,7 +17,7 @@
                     <button class="header-button">Home</button>
                 </form>
                 <c:choose>
-                    <c:when test="${isUserLogged}">
+                    <c:when test="${isUserSessionActive}">
                         <c:choose>
                             <c:when test="${!isSubscriptionActive}">
                                 <form method="post" action="./profile">

@@ -70,7 +70,7 @@ public class RegisterServlet extends HttpServlet {
     }
 
     private void loadRegisterPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("isUserLogged", false);
+        req.setAttribute("isUserSessionActive", false);
         req.getRequestDispatcher("/WEB-INF/register.jsp").forward(req, resp);
     }
 
