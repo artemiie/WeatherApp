@@ -6,12 +6,13 @@ import org.weatherapp.model.User;
 import java.util.List;
 
 public class UserDao {
-    public static void save(User user) {
+    public static Long save(User user) {
         Session session = DaoConfiguration.getSessionFactory().openSession();
         try {
             session.beginTransaction();
-            session.save(user);
+            Long savedUserId = (Long) session.save(user);
             session.getTransaction().commit();
+            return savedUserId;
         } catch (Exception e) {
             throw e;
         } finally {
@@ -19,7 +20,7 @@ public class UserDao {
         }
     }
 
-    public static User getById(int userId) {
+    public static User getById(Long userId) {
         Session session = DaoConfiguration.getSessionFactory().openSession();
         try {
             session.beginTransaction();
@@ -33,7 +34,7 @@ public class UserDao {
         }
     }
 
-    public static List<User> getByLogin(String login) throws Exception {
+    public static List<User> getByLogin(String login) {
         Session session = DaoConfiguration.getSessionFactory().openSession();
         try {
             session.beginTransaction();

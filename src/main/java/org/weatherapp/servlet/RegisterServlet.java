@@ -2,6 +2,7 @@ package org.weatherapp.servlet;
 
 import com.password4j.Hash;
 import com.password4j.Password;
+import org.weatherapp.exception.RegisterParametersException;
 import org.weatherapp.model.User;
 import org.weatherapp.model.UserSession;
 import org.weatherapp.service.UserService;
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.weatherapp.util.Utils.isValid;
+import static org.weatherapp.util.Utils.isStringNotNullNotEmptyNotBlank;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
@@ -36,16 +37,13 @@ public class RegisterServlet extends HttpServlet {
         final String login = req.getParameter("login");
         final String password = req.getParameter("password");
         final String name = req.getParameter("name");
-        //final int userId = UUID.randomUUID().toString();
         final String sessionId = UUID.randomUUID().toString();
 
-        if (!isValid(login)) errors.put("login", "Please enter a valid login");
-        if (!isValid(password)) errors.put("password", "Please enter a valid password");
-        if (!isValid(name)) errors.put("name", "Please enter a valid name");
+        checkCredentials(login, password, name, errors);
 
+        //report errors if any
         if (!errors.isEmpty()) {
-            loadRegisterPage(req, resp);
-            return;
+            throw new RegisterParametersException("Register credentials can't be empty or blank.");
         }
 
         Hash hash = Password.hash(password).withBcrypt();
@@ -62,7 +60,7 @@ public class RegisterServlet extends HttpServlet {
 
         UserSessionService.save(userSession);
 
-        req.getSession().setAttribute("user",newUser);
+        req.getSession().setAttribute("user", newUser);
 
         Cookie newCookie = new Cookie("sessionId", userSession.getSessionId());
         resp.addCookie(newCookie);
@@ -72,6 +70,12 @@ public class RegisterServlet extends HttpServlet {
     private void loadRegisterPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("isUserSessionActive", false);
         req.getRequestDispatcher("/WEB-INF/register.jsp").forward(req, resp);
+    }
+
+    private void checkCredentials(String login, String password, String name, Map<String, String> errors) {
+        if (!isStringNotNullNotEmptyNotBlank(login)) errors.put("login", "Login is not valid");
+        if (!isStringNotNullNotEmptyNotBlank(password)) errors.put("password", "Password is not valid.");
+        if (!isStringNotNullNotEmptyNotBlank(name)) errors.put("name", "Name is not valid.");
     }
 
 }

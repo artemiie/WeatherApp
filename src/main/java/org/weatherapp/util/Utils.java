@@ -1,47 +1,45 @@
 package org.weatherapp.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.weatherapp.exception.CookieNotFoundException;
+import org.weatherapp.exception.UserNotLoggedException;
+import org.weatherapp.model.User;
 import org.weatherapp.model.UserSession;
 import org.weatherapp.service.UserService;
 import org.weatherapp.service.UserSessionService;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 
 public class Utils {
-    public static Cookie getCookieByName(Cookie[] cookies, String name) throws Exception {
+    public static Cookie getCookieByName(Cookie[] cookies, String cookieName) throws CookieNotFoundException {
         if (cookies == null) {
-            throw new Exception("User is not logged in.");
+            throw new CookieNotFoundException("Cookie with name \""+cookieName+"\" not found.");
         }
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(name)) {
+            if (cookie.getName().equals(cookieName)) {
                 return cookie;
             }
         }
-        throw new Exception("User is not logged in.");
+        throw new CookieNotFoundException("Cookie with name \""+cookieName+"\" not found.");
     }
 
-    public static boolean isValid(String txt) {
+    public static boolean isStringNotNullNotEmptyNotBlank(String txt) {
         return !StringUtils.isEmpty(txt) && !StringUtils.isBlank(txt);
     }
 
-    public static boolean isUserSessionActive(Cookie cookie) {
-        if (cookie == null || cookie.getValue() == null || cookie.getValue().isEmpty() || cookie.getValue().isBlank()) {
+    public static boolean isUserSessionActive(Cookie cookie) throws UserNotLoggedException {
+        if (cookie == null || !isStringNotNullNotEmptyNotBlank(cookie.getValue())) {
             return false;
         }
 
         String sessionId = cookie.getValue();
-        UserSession userSession;
-        try {
-            userSession = UserSessionService.find(sessionId);
-        } catch (Exception e) {
+        UserSession userSessionOnDb = UserSessionService.find(sessionId);
+        if (userSessionOnDb == null) {
             return false;
         }
 
-        try {
-            assert UserService.findById(userSession.getUserId()) != null;
-        } catch (Exception e) {
-            UserSessionService.delete(sessionId);
+        User userOnDb = UserService.findById(userSessionOnDb.getUserId());
+        if (userOnDb == null) {
             return false;
         }
 

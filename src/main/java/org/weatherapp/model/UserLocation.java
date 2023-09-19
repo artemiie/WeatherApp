@@ -10,7 +10,7 @@ public class UserLocation {
     @Column(name = "location_id")
     private int id;
     @Column(name = "user_id")
-    private int userId;
+    private Long userId;
     @Column(name = "lat")
     private String lat;
     @Column(name = "lon")
@@ -25,7 +25,7 @@ public class UserLocation {
     public UserLocation() {
     }
 
-    public UserLocation(int userId, String lat, String lon, String city, String country, String state) {
+    public UserLocation(Long userId, String lat, String lon, String city, String country, String state) {
         this.userId = userId;
         this.lat = lat;
         this.lon = lon;
@@ -34,11 +34,11 @@ public class UserLocation {
         this.state = state;
     }
 
-    public int getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

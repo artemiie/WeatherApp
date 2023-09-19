@@ -8,7 +8,7 @@ public class UserSessionService {
         UserSessionDao.save(userSession);
     }
 
-    public static UserSession find(String sessionId) throws Exception {
+    public static UserSession find(String sessionId){
         return UserSessionDao.find(sessionId);
     }
 

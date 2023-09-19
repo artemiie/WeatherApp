@@ -6,12 +6,28 @@ import org.weatherapp.model.UserLocation;
 import java.util.List;
 
 public class UserLocationDao {
-    public static void save(UserLocation userLocation) {
+    public static Long save(UserLocation userLocation) {
+        Session session = DaoConfiguration.getSessionFactory().openSession();
+        Long savedUserLocationId = null;
+        try {
+            session.beginTransaction();
+            savedUserLocationId = (Long) session.save(userLocation);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            session.close();
+        }
+        return savedUserLocationId;
+    }
+
+    public static List<UserLocation> getByUserId(Long userId) {
         Session session = DaoConfiguration.getSessionFactory().openSession();
         try {
             session.beginTransaction();
-            session.save(userLocation);
+            List<UserLocation> userLocationList = session.createQuery("from UserLocation where userId = '" + userId + "'").getResultList();
             session.getTransaction().commit();
+            return userLocationList;
         } catch (Exception e) {
             throw e;
         } finally {
@@ -19,13 +35,13 @@ public class UserLocationDao {
         }
     }
 
-    public static List<UserLocation> getByUserId(int userId) {
+    public static UserLocation getById(Long locationId) {
         Session session = DaoConfiguration.getSessionFactory().openSession();
         try {
             session.beginTransaction();
-            List<UserLocation> userLocationList = session.createQuery("from UserLocation where userId = '" + userId + "'").getResultList();
+            UserLocation userLocation = session.get(UserLocation.class,locationId);
             session.getTransaction().commit();
-            return userLocationList;
+            return userLocation;
         } catch (Exception e) {
             throw e;
         } finally {

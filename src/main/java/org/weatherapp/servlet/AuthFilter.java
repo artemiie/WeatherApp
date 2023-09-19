@@ -1,3 +1,4 @@
+/*
 package org.weatherapp.servlet;
 
 import org.weatherapp.dao.DaoConfiguration;
@@ -36,3 +37,4 @@ public class AuthFilter extends HttpFilter {
     public void destroy() {
     }
 }
+*/

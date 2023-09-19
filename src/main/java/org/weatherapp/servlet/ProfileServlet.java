@@ -2,6 +2,9 @@ package org.weatherapp.servlet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.weatherapp.exception.CookieNotFoundException;
+import org.weatherapp.exception.NotValidLocationParamatersException;
+import org.weatherapp.exception.UserNotLoggedException;
 import org.weatherapp.model.User;
 import org.weatherapp.model.UserLocation;
 import org.weatherapp.model.UserSession;
@@ -25,40 +28,36 @@ public class ProfileServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        checkIfUserIsLoggedIn(req, resp);
-        User user = getLoggedInUser(req, resp);
+        checkIfUserIsLoggedIn(req);
+        User user = getUserBySessionId(req);
         loadProfilePageForLoggedInUser(req, resp, user);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        checkIfUserIsLoggedIn(req, resp);
-        User user = getLoggedInUser(req, resp);
+        checkIfUserIsLoggedIn(req);
+        User user = getUserBySessionId(req);
         addLocationsToUser(req, resp, user);
         loadProfilePageForLoggedInUser(req, resp, user);
     }
 
-    private void checkIfUserIsLoggedIn(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void checkIfUserIsLoggedIn(HttpServletRequest req) throws ServletException {
         boolean isUserSessionActive = (boolean) req.getAttribute("isUserSessionActive");
         if (!isUserSessionActive) {
             req.setAttribute("isUserSessionActive", false);
-            req.getRequestDispatcher("/WEB-INF/profile.jsp").forward(req, resp);
-            throw new RuntimeException("User is not logged in.");
+            throw new UserNotLoggedException("User is not logged in.");
         }
     }
 
-    private User getLoggedInUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Cookie cookie = null;
-        UserSession userSession = null;
+    private User getUserBySessionId(HttpServletRequest req) throws CookieNotFoundException {
         User user = null;
         try {
-            cookie = getCookieByName(req.getCookies(), "sessionId");
-            userSession = UserSessionService.find(cookie.getValue());
+            Cookie cookie = getCookieByName(req.getCookies(), "sessionId");
+            UserSession userSession = UserSessionService.find(cookie.getValue());
             user = UserService.findById(userSession.getUserId());
         } catch (Exception e) {
             req.setAttribute("isUserSessionActive", false);
-            req.getRequestDispatcher("/WEB-INF/profile.jsp").forward(req, resp);
-            throw new RuntimeException("User is not logged in.", e);
+            throw e;
         }
         return user;
     }
@@ -81,8 +80,7 @@ public class ProfileServlet extends HttpServlet {
         if (!NumberUtils.isCreatable(lat) || !NumberUtils.isCreatable(lon) || StringUtils.isEmpty(city) || StringUtils.isEmpty(country)) {
             req.setAttribute("subscribeOnLocationError", true);
             req.setAttribute("subscribeOnLocationErrorMsg", "Something went wrong, please try again.");
-            req.getRequestDispatcher("/WEB-INF/profile.jsp").forward(req, resp);
-            throw new RuntimeException("Some of these values may not be correct: LAT=[" + lat + "], LON=[" + lon + "], CITY=[" + city + "], COUNTRY=[" + country + "].");
+            throw new NotValidLocationParamatersException("Some of these values may not be correct: LAT=[" + lat + "], LON=[" + lon + "], CITY=[" + city + "], COUNTRY=[" + country + "].");
         }
 
         UserLocation userLocation = new UserLocation(user.getUserId(), lat, lon, city, country, state);

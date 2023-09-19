@@ -13,14 +13,14 @@ public class UserSession {
     @Column(name = "session_id")
     private String sessionId;
     @Column(name = "user_id")
-    private int userId;
+    private Long userId;
     @Column(name = "expiry_datetime")
     private LocalDateTime expiryDate;
 
     public UserSession() {
     }
 
-    public UserSession(String sessionId, int userId, LocalDateTime expiryDate) {
+    public UserSession(String sessionId, Long userId, LocalDateTime expiryDate) {
         this.sessionId = sessionId;
         this.userId = userId;
         this.expiryDate = expiryDate;
@@ -34,11 +34,11 @@ public class UserSession {
         this.sessionId = sessionId;
     }
 
-    public int getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
