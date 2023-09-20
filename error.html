@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #bigCenteredBox {
+            width: 400px;
+            height: 250px;
+            background-color: #fce7e7;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+
+        .error-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Остальные стили остаются без изменений */
+
+        .caption {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        #inputBox {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            max-width: 300px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div id="message" class="message">Сообщение исчезнет через 5 секунд</div>
+
+    <div id="container">
+        <div class="caption">Current weather</div>
+        <div id="bigCenteredBox">
+            <!-- Отображение менее агрессивной ошибки -->
+            <div class="error-text">Произошла ошибка. Пожалуйста, повторите попытку позже.</div>
+        </div>
+    </div>
+
+</body>
+
+</html>
